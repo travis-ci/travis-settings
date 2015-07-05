@@ -1,3 +1,10 @@
+PATH
+  remote: .
+  specs:
+    travis-settings (0.0.1)
+      activemodel
+      virtus
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -48,10 +55,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activemodel
   mocha
   rspec
-  virtus
+  travis-settings!
 
 BUNDLED WITH
    1.10.5
