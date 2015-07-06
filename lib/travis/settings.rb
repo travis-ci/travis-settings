@@ -1,5 +1,4 @@
 require 'coercible'
-# require 'travis/settings/overwritable_methods'
 require 'travis/settings/collection'
 require 'travis/settings/encrypted_column'
 require 'travis/settings/model'
@@ -7,7 +6,6 @@ require 'travis/settings/model_extensions'
 
 module Travis
   class Settings
-    # include Travis::OverwritableMethods
     include Virtus.model
     include ActiveModel::Validations
     include Travis::Settings::ModelExtensions
