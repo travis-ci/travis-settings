@@ -16,9 +16,9 @@ module Travis
     end
 
     def merge(hash)
-      hash.each { |k, v|
+      hash.each do |k, v|
         set(k, v) unless collection?(k) || model?(k)
-      }
+      end
     end
 
     def obfuscated
@@ -26,9 +26,7 @@ module Travis
     end
 
     def save
-      if valid?
-        @on_save.call
-      end
+      @on_save.call if @on_save if valid?
     end
 
     def to_json
@@ -37,13 +35,11 @@ module Travis
 
     def to_hash
       result = super
-
       result.each do |key, value|
         if value.respond_to?(:to_hash)
           result[key] = value.to_hash
         end
       end
-
       result
     end
   end
