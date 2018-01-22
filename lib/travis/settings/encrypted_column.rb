@@ -64,6 +64,9 @@ module Travis
         aes = create_aes :decrypt, key.to_s, iv
 
         result = aes.update(data) + aes.final
+        if result
+          result.force_encoding('utf-8')
+        end
       end
 
       def encrypt(data)

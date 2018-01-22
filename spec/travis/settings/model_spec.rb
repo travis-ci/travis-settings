@@ -1,4 +1,5 @@
 require 'json'
+require 'spec_helper'
 
 describe Travis::Settings::Model do
   attr_reader :model_class
@@ -44,9 +45,9 @@ describe Travis::Settings::Model do
   end
 
   it 'can be loaded from json' do
-    encrypted = Travis::Settings::EncryptedColumn.new(use_prefix: false).dump('foo')
+    encrypted = Travis::Settings::EncryptedColumn.new(use_prefix: false).dump('zażółć gęślą jaźń')
     model = model_class.load(secret: encrypted)
-    expect(model.secret.decrypt).to eq('foo')
+    expect(model.secret.decrypt).to eq('zażółć gęślą jaźń')
   end
 
   it 'allows to update attributes' do
