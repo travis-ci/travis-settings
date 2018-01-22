@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe Travis::DefaultSettings do
   let(:settings) do
     klass = Class.new(Travis::Settings) {

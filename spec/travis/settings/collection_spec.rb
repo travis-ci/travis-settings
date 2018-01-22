@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe Travis::Settings::Collection do
   attr_reader :collection_class
 
