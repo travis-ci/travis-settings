@@ -1,5 +1,6 @@
 require 'securerandom'
 require 'base64'
+require 'openssl'
 
 module Travis
   class Settings
@@ -88,7 +89,7 @@ module Travis
 
       def create_aes(mode = :encrypt, key, iv)
         key = key[0, 32]
-        aes = OpenSSL::Cipher::AES.new(256, :CBC)
+        aes = ::OpenSSL::Cipher::AES.new(256, :CBC)
 
         aes.send(mode)
         aes.key = key
