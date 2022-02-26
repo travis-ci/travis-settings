@@ -4,7 +4,7 @@ $:.unshift File.expand_path('../lib', __FILE__)
 
 Gem::Specification.new do |s|
   s.name         = "travis-settings"
-  s.version      = "0.0.1"
+  s.version      = "0.0.2"
   s.authors      = ["Travis CI"]
   s.email        = "contact@travis-ci.org"
   s.homepage     = "https://github.com/travis-ci/travis-settings"
@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
   s.rubyforge_project = '[none]'
 
   s.add_dependency 'virtus'
-  s.add_dependency 'activemodel'
+  s.add_dependency 'activemodel', '~> 6.1.4.6'
 end
