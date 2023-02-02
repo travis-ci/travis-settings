@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
   s.rubyforge_project = '[none]'
 
   s.add_dependency 'virtus'
-  s.add_dependency 'activemodel', '~> 6.1.6.1'
+  s.add_dependency 'activemodel', '~> 6.1.7.1'
 end
