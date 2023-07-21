@@ -1,4 +1,6 @@
-$:.unshift File.expand_path('lib', __dir__)
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift File.expand_path('lib', __dir__)
 
 Gem::Specification.new do |s|
   s.name         = 'travis-settings'
@@ -14,6 +16,7 @@ Gem::Specification.new do |s|
   s.platform     = Gem::Platform::RUBY
   s.require_path = 'lib'
   s.rubyforge_project = '[none]'
+  s.required_ruby_version = '~> 3.2'
 
   s.add_dependency 'activemodel'
   s.add_dependency 'virtus'

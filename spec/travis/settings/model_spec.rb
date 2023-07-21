@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 require 'spec_helper'
 
@@ -35,7 +37,7 @@ describe Travis::Settings::Model do
     end
 
     model = model_class.new
-    expect(model).to_not be_valid
+    expect(model).not_to be_valid
     expect(model.errors[:secret]).to eq(['can\'t be blank'])
   end
 
@@ -103,7 +105,7 @@ describe Travis::Settings::Model do
     end
 
     model = model_class.new
-    expect(model).to_not be_valid
+    expect(model).not_to be_valid
     expect(model.errors[:name]).to eq(['can\'t be blank'])
   end
 

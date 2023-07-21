@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Travis::Settings do
   it 'returns validations without going through i18n' do
     settings = Class.new(Travis::Settings) do
@@ -9,7 +11,7 @@ describe Travis::Settings do
     end.new
 
     settings.foo = nil
-    expect(settings).to_not be_valid
+    expect(settings).not_to be_valid
     expect(settings.errors[:foo]).to eq(['can\'t be blank'])
   end
 
@@ -168,11 +170,11 @@ describe Travis::Settings do
       collection_class = Class.new(Travis::Settings::Collection) do
         model model_class
       end
-      Travis::Settings.const_set('Items', collection_class)
+      described_class.const_set('Items', collection_class)
     end
 
     after do
-      Travis::Settings.send(:remove_const, 'Items')
+      described_class.send(:remove_const, 'Items')
     end
 
     it 'allows to register a collection' do
@@ -196,14 +198,14 @@ describe Travis::Settings do
   end
 
   it 'allows to load from nil' do
-    settings = Travis::Settings.new(nil)
+    settings = described_class.new(nil)
     settings.to_hash == {}
   end
 
   describe 'save' do
     it 'runs on_save callback' do
       on_save_performed = false
-      settings = Travis::Settings.new('foo' => 'bar').on_save { on_save_performed = true }
+      settings = described_class.new('foo' => 'bar').on_save { on_save_performed = true }
       expect(settings.save).to eq(true)
 
       expect(on_save_performed).to eq(true)
@@ -211,7 +213,7 @@ describe Travis::Settings do
 
     it 'does not run on_save callback if settings are not valid' do
       on_save_performed = false
-      settings = Travis::Settings.new.on_save { on_save_performed = true }
+      settings = described_class.new.on_save { on_save_performed = true }
       settings.stubs(:valid?).returns(false)
       expect(settings.save).to eq(nil)
 
@@ -245,7 +247,7 @@ describe Travis::Settings do
 
       column = Travis::Settings::EncryptedColumn.new(use_prefix: false)
 
-      expect(hash[:secret]).to_not eq('44')
+      expect(hash[:secret]).not_to eq('44')
       expect(column.load(hash[:secret])).to eq('44')
 
       expect(hash[:first_setting]).to eq('a value')
@@ -254,14 +256,14 @@ describe Travis::Settings do
       hash_item = hash[:items].first
       expect(hash_item[:id]).to eq(item.id)
       expect(hash_item[:name]).to eq('foo')
-      expect(hash_item[:content]).to_not eq('bar')
+      expect(hash_item[:content]).not_to eq('bar')
       expect(column.load(hash_item[:content])).to eq('bar')
     end
   end
 
   describe '#merge' do
     it 'does not save' do
-      settings = Travis::Settings.new
+      settings = described_class.new
       settings.merge(foo: 'bar')
       settings.expects(:save).never
     end
@@ -285,7 +287,7 @@ describe Travis::Settings do
     end
 
     it 'does not allow to merge unknown settings' do
-      settings = Travis::Settings.new
+      settings = described_class.new
       settings.merge('possibly_unknown_setting' => 'foo')
 
       expect(settings.to_hash['possibly_unknown_setting']).to be_nil

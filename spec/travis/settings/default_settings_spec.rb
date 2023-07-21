@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Travis::DefaultSettings do
@@ -9,6 +11,7 @@ describe Travis::DefaultSettings do
     end
     klass.new
   end
+
   describe 'getting properties' do
     it 'fetches a given path from default settings' do
       expect(settings.foo).to eql 'bar'

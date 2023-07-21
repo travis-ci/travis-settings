@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'virtus'
 
 module Travis
   class Settings
     class EncryptedValue
       include Virtus.value_object
-      attr_reader :value, :key
+      attr_reader :value
 
       values do
         attribute :value, String

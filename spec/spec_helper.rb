@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'travis/settings'
 
 module Travis

@@ -1,17 +1,19 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Travis::Settings::Collection do
   attr_reader :collection_class
 
   before do
-    @model_class = Class.new(Travis::Settings::Model) do
+    model_class = Class.new(Travis::Settings::Model) do
       attribute :description
 
       attribute :id, String
       attribute :secret, Travis::Settings::EncryptedValue
     end
 
-    Travis::Settings.const_set('Foo', @model_class)
+    Travis::Settings.const_set('Foo', model_class)
     @collection_class = Class.new(described_class) do
       model Travis::Settings::Foo
     end
@@ -50,11 +52,11 @@ describe Travis::Settings::Collection do
       collection = collection_class.new
       item = collection.create(description: 'foo')
 
-      expect(collection.size).to eql(1)
+      expect(collection.size).to be(1)
 
       collection.destroy(item.id)
 
-      expect(collection.size).to eql(0)
+      expect(collection.size).to be(0)
     end
   end
 
@@ -63,7 +65,7 @@ describe Travis::Settings::Collection do
       collection = collection_class.new
       item = collection.create(description: 'foo')
 
-      expect(collection.size).to eql(1)
+      expect(collection.size).to be(1)
 
       expect(collection.find(item.id)).to eq(item)
       expect(collection.find('foobarbaz')).to be_nil

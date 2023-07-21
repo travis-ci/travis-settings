@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'coercible'
 require 'travis/settings/collection'
 require 'travis/settings/encrypted_column'
@@ -28,7 +30,7 @@ module Travis
     def save
       return unless valid?
 
-      @on_save.call if @on_save
+      @on_save&.call
     end
 
     def to_json(*_args)

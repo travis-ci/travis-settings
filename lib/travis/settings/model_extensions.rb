@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_model'
 
 module Travis
@@ -82,8 +84,8 @@ module Travis
       end
 
       def to_hash
-        attributes.each_with_object({}) do |(name, value), hash|
-          hash[name] = value.respond_to?(:to_hash) ? value.to_hash : value
+        attributes.transform_values do |value|
+          value.respond_to?(:to_hash) ? value.to_hash : value
         end
       end
 
@@ -139,7 +141,7 @@ module Travis
           if collection?(key) || encrypted?(key) || model?(key)
             thing = get(key)
             thing = set(key, primitive(key).new) if !thing && value
-            thing.load(value, self.additional_attributes) if thing
+            thing&.load(value, self.additional_attributes)
           elsif attribute?(key)
             set(key, value)
           end
