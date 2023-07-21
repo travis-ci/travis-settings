@@ -1,5 +1,6 @@
 require 'securerandom'
 require 'base64'
+require 'openssl'
 
 module Travis
   class Settings

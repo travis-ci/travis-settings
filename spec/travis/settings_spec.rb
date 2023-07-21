@@ -3,11 +3,14 @@ describe Travis::Settings do
     settings = Class.new(Travis::Settings) {
       attribute :foo, String
       validates :foo, presence: true
+      def self.model_name
+        ActiveModel::Name.new(self, nil, "temp")
+      end
     }.new
 
     settings.foo = nil
     expect(settings).to_not be_valid
-    expect(settings.errors[:foo]).to eq([:blank])
+    expect(settings.errors[:foo]).to eq(['can\'t be blank'])
   end
 
   describe 'adding a setting' do
@@ -15,7 +18,7 @@ describe Travis::Settings do
       Class.new(Travis::Settings) {
         attribute :an_integer_field, Integer
         attribute :a_boolean_field, :Boolean, default: true
-      }
+     }
     }
 
     it "doesn't allow to set or get unknown settings" do
