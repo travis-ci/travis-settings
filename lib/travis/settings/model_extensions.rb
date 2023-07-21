@@ -4,23 +4,18 @@ module Travis
   class Settings
     module AccessorExtensions
       def set(instance, value)
-        if instance.frozen?
-          raise 'setting values is not supported on default settings'
-        end
+        raise 'setting values is not supported on default settings' if instance.frozen?
 
         super
       end
 
       def get(instance)
-        if type.primitive <= Travis::Settings::EncryptedValue
-          unless instance.instance_variable_get(instance_variable_name)
-            value = Travis::Settings::EncryptedValue.new(nil)
-            if instance.frozen?
-              return value
-            else
-              set(instance, value)
-            end
-          end
+        if type.primitive <= Travis::Settings::EncryptedValue && !instance.instance_variable_get(instance_variable_name)
+          value = Travis::Settings::EncryptedValue.new(nil)
+          return value if instance.frozen?
+
+          set(instance, value)
+
         end
 
         super instance
@@ -34,7 +29,7 @@ module Travis
         # using i18n if available. I don't want such a behavior,
         # as I want to return error "codes" like :blank, not
         # full text like "can't be blank"
-        def normalize_message(attribute, message, options)
+        def normalize_message(_attribute, message, _options)
           message || :invalid
         end
       end
@@ -54,7 +49,7 @@ module Travis
         end
 
         def load(json, additional_attributes = {})
-          instance = new()
+          instance = new
 
           json = JSON.parse(json) if json.is_a?(String)
           instance.load json, additional_attributes
@@ -73,9 +68,7 @@ module Travis
       def additional_attributes=(hash = {})
         attribute_set.each do |attribute|
           value = get(attribute.name)
-          if value.respond_to?(:additional_attributes=)
-            value.additional_attributes = hash
-          end
+          value.additional_attributes = hash if value.respond_to?(:additional_attributes=)
         end
         @additional_attributes = hash
       end
@@ -97,21 +90,21 @@ module Travis
       def collection?(name)
         # TODO: I don't like this type of class checking, it will be better to work
         # based on an API contract, but it should do for now
-        if attribute = attribute_set[name.to_sym]
-          attribute.type.primitive <= Travis::Settings::Collection
-        end
+        return unless attribute = attribute_set[name.to_sym]
+
+        attribute.type.primitive <= Travis::Settings::Collection
       end
 
       def encrypted?(name)
-        if attribute = attribute_set[name.to_sym]
-          attribute.type.primitive <= Travis::Settings::EncryptedValue
-        end
+        return unless attribute = attribute_set[name.to_sym]
+
+        attribute.type.primitive <= Travis::Settings::EncryptedValue
       end
 
       def model?(name)
-        if attribute = attribute_set[name.to_sym]
-          attribute.type.primitive <= Travis::Settings::Model
-        end
+        return unless attribute = attribute_set[name.to_sym]
+
+        attribute.type.primitive <= Travis::Settings::Model
       end
 
       def primitive(name)
@@ -119,19 +112,19 @@ module Travis
       end
 
       def get(key)
-        if attribute?(key)
-          self.send(key)
-        end
+        return unless attribute?(key)
+
+        send(key)
       end
 
       def set(key, value)
-        if attribute?(key)
-          self.send("#{key}=", value)
-        end
+        return unless attribute?(key)
+
+        send("#{key}=", value)
       end
 
       def simple_attributes
-        attributes.select { |k, v| simple_attribute?(k) }
+        attributes.select { |k, _v| simple_attribute?(k) }
       end
 
       def simple_attribute?(key)

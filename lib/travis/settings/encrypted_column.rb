@@ -65,9 +65,9 @@ module Travis
         aes = create_aes :decrypt, key.to_s, iv
 
         result = aes.update(data) + aes.final
-        if result
-          result.force_encoding('utf-8')
-        end
+        return unless result
+
+        result.force_encoding('utf-8')
       end
 
       def encrypt(data)
@@ -89,7 +89,7 @@ module Travis
 
       def create_aes(mode = :encrypt, key, iv)
         key = key[0, 32]
-        aes = OpenSSL::Cipher::AES.new(256, :CBC)
+        aes = OpenSSL::Cipher.new('aes-256-cbc')
 
         aes.send(mode)
         aes.key = key

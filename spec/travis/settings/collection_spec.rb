@@ -4,12 +4,12 @@ describe Travis::Settings::Collection do
   attr_reader :collection_class
 
   before do
-    @model_class = Class.new(Travis::Settings::Model) {
+    @model_class = Class.new(Travis::Settings::Model) do
       attribute :description
 
       attribute :id, String
       attribute :secret, Travis::Settings::EncryptedValue
-    }
+    end
 
     Travis::Settings.const_set('Foo', @model_class)
     @collection_class = Class.new(described_class) do

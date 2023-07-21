@@ -10,4 +10,3 @@ RSpec.configure do |c|
   c.mock_with :mocha
   # c.backtrace_clean_patterns.clear
 end
-

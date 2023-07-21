@@ -26,19 +26,19 @@ module Travis
     end
 
     def save
-      @on_save.call if @on_save if valid?
+      return unless valid?
+
+      @on_save.call if @on_save
     end
 
-    def to_json
+    def to_json(*_args)
       to_hash.to_json
     end
 
     def to_hash
       result = super
       result.each do |key, value|
-        if value.respond_to?(:to_hash)
-          result[key] = value.to_hash
-        end
+        result[key] = value.to_hash if value.respond_to?(:to_hash)
       end
       result
     end
@@ -52,11 +52,11 @@ module Travis
     end
 
     def merge(*)
-      raise "merge is not supported on default settings"
+      raise 'merge is not supported on default settings'
     end
 
-    def set(key, value)
-      raise "setting values is not supported on default settings"
+    def set(_key, _value)
+      raise 'setting values is not supported on default settings'
     end
   end
 end

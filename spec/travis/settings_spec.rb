@@ -1,12 +1,12 @@
 describe Travis::Settings do
   it 'returns validations without going through i18n' do
-    settings = Class.new(Travis::Settings) {
+    settings = Class.new(Travis::Settings) do
       attribute :foo, String
       validates :foo, presence: true
       def self.model_name
-        ActiveModel::Name.new(self, nil, "temp")
+        ActiveModel::Name.new(self, nil, 'temp')
       end
-    }.new
+    end.new
 
     settings.foo = nil
     expect(settings).to_not be_valid
@@ -14,12 +14,12 @@ describe Travis::Settings do
   end
 
   describe 'adding a setting' do
-    let(:settings_class) {
-      Class.new(Travis::Settings) {
+    let(:settings_class) do
+      Class.new(Travis::Settings) do
         attribute :an_integer_field, Integer
         attribute :a_boolean_field, :Boolean, default: true
-     }
-    }
+      end
+    end
 
     it "doesn't allow to set or get unknown settings" do
       settings = settings_class.new
@@ -29,7 +29,7 @@ describe Travis::Settings do
     end
 
     it 'sets false properly as boolean, not changing it to nil' do
-       settings = settings_class.new
+      settings = settings_class.new
 
       expect(settings.a_boolean_field?).to be true
 
@@ -48,17 +48,17 @@ describe Travis::Settings do
   end
 
   describe '#create' do
-    let(:settings) {
-      model_class = Class.new(Travis::Settings::Model) {
+    let(:settings) do
+      model_class = Class.new(Travis::Settings::Model) do
         attribute :name, String
         attribute :repository_id, Integer
-      }
-      settings_class = Class.new(Travis::Settings) {
+      end
+      settings_class = Class.new(Travis::Settings) do
         attribute :item, model_class
-      }
+      end
 
       settings_class.new
-    }
+    end
 
     it 'creates a model for a given key' do
       result = settings.create(:item, name: 'foo')
@@ -78,15 +78,15 @@ describe Travis::Settings do
   end
 
   describe '#update' do
-    let(:settings) {
-      model_class = Class.new(Travis::Settings::Model) {
+    let(:settings) do
+      model_class = Class.new(Travis::Settings::Model) do
         attribute :name, String
-      }
-      settings_class = Class.new(Travis::Settings) {
+      end
+      settings_class = Class.new(Travis::Settings) do
         attribute :item, model_class
-      }
+      end
       settings_class.new
-    }
+    end
 
     it 'updates an existing model' do
       settings.load(item: { name: 'foo' })
@@ -109,12 +109,12 @@ describe Travis::Settings do
 
   describe '#delete' do
     it 'removes a model with a given name' do
-      model_class = Class.new(Travis::Settings::Model) {
+      model_class = Class.new(Travis::Settings::Model) do
         attribute :name, String
-      }
-      settings_class = Class.new(Travis::Settings) {
+      end
+      settings_class = Class.new(Travis::Settings) do
         attribute :item, model_class
-      }
+      end
 
       settings = settings_class.new
       settings.load(item: { name: 'foo' })
@@ -132,22 +132,22 @@ describe Travis::Settings do
 
   describe 'simple_attributes' do
     it 'returns only plan attributes' do
-      model_class = Class.new(Travis::Settings::Model) {
+      model_class = Class.new(Travis::Settings::Model) do
         attribute :name, String
-      }
-      collection_class = Class.new(Travis::Settings::Collection) {
+      end
+      collection_class = Class.new(Travis::Settings::Collection) do
         model model_class
-      }
-      settings_class = Class.new(Travis::Settings) {
+      end
+      settings_class = Class.new(Travis::Settings) do
         attribute :items, collection_class
         attribute :item, model_class
         attribute :secret, Travis::Settings::EncryptedValue
         attribute :plain, String
-      }
+      end
 
       settings = settings_class.new
 
-      settings.load({ items: [{ name: 'foo'}],
+      settings.load({ items: [{ name: 'foo' }],
                       item: { name: 'bar' },
                       secret: Travis::Settings::EncryptedValue.new('baz'),
                       plain: 'yup' })
@@ -162,12 +162,12 @@ describe Travis::Settings do
 
   describe 'registering a collection' do
     before do
-      model_class = Class.new(Travis::Settings::Model) {
+      model_class = Class.new(Travis::Settings::Model) do
         attribute :name, String
-      }
-      collection_class = Class.new(Travis::Settings::Collection) {
+      end
+      collection_class = Class.new(Travis::Settings::Collection) do
         model model_class
-      }
+      end
       Travis::Settings.const_set('Items', collection_class)
     end
 
@@ -175,11 +175,10 @@ describe Travis::Settings do
       Travis::Settings.send(:remove_const, 'Items')
     end
 
-
     it 'allows to register a collection' do
-      settings_class = Class.new(Travis::Settings) {
+      settings_class = Class.new(Travis::Settings) do
         attribute :items, Travis::Settings::Items.for_virtus
-      }
+      end
       settings = settings_class.new
 
       expect(settings.items.to_a).to eq([])
@@ -187,12 +186,12 @@ describe Travis::Settings do
     end
 
     it 'populates registered collections from raw settings' do
-      settings_class = Class.new(Travis::Settings) {
+      settings_class = Class.new(Travis::Settings) do
         attribute :items, Travis::Settings::Items.for_virtus
-      }
+      end
 
       settings = settings_class.new items: [{ name: 'one' }, { name: 'two' }]
-      expect(settings.items.map(&:name)).to eq(['one', 'two'])
+      expect(settings.items.map(&:name)).to eq(%w[one two])
     end
   end
 
@@ -212,7 +211,7 @@ describe Travis::Settings do
 
     it 'does not run on_save callback if settings are not valid' do
       on_save_performed = false
-      settings = Travis::Settings.new.on_save { on_save_performed = true; }
+      settings = Travis::Settings.new.on_save { on_save_performed = true }
       settings.stubs(:valid?).returns(false)
       expect(settings.save).to eq(nil)
 
@@ -222,20 +221,20 @@ describe Travis::Settings do
 
   describe 'to_hash' do
     it 'returns registered collections and all attributes' do
-      model_class = Class.new(Travis::Settings::Model) {
+      model_class = Class.new(Travis::Settings::Model) do
         attribute :id, String
         attribute :name, String
         attribute :content, Travis::Settings::EncryptedValue
-      }
-      collection_class = Class.new(Travis::Settings::Collection) {
+      end
+      collection_class = Class.new(Travis::Settings::Collection) do
         model model_class
-      }
-      settings_class = Class.new(Travis::Settings) {
+      end
+      settings_class = Class.new(Travis::Settings) do
         attribute :items, collection_class.for_virtus
         attribute :first_setting,  String
         attribute :second_setting, String, default: 'second setting default'
         attribute :secret, Travis::Settings::EncryptedValue
-      }
+      end
 
       settings = settings_class.new(first_setting: 'a value')
       settings.secret = '44'
@@ -268,14 +267,14 @@ describe Travis::Settings do
     end
 
     it 'merges individual fields' do
-      settings_class = Class.new(Travis::Settings) {
+      settings_class = Class.new(Travis::Settings) do
         attribute :items, Class.new(Travis::Settings::Collection) {
           model Class.new(Travis::Settings::Model) {
             attribute :name, String
           }
         }.for_virtus
         attribute :foo, String
-      }
+      end
       settings = settings_class.new(foo: 'bar')
       expect(settings.foo).to eq('bar')
 
@@ -283,7 +282,7 @@ describe Travis::Settings do
 
       expect(settings.to_hash[:foo]).to eq('baz')
       expect(settings.to_hash[:items]).to eq([])
-     end
+    end
 
     it 'does not allow to merge unknown settings' do
       settings = Travis::Settings.new

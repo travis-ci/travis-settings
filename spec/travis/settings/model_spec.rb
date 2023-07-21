@@ -11,7 +11,7 @@ describe Travis::Settings::Model do
       attribute :height, Integer
       attribute :awesome, :Boolean, default: true
       def self.model_name
-        ActiveModel::Name.new(self, nil, "temp")
+        ActiveModel::Name.new(self, nil, 'temp')
       end
       attribute :secret, Travis::Settings::EncryptedValue
     end
@@ -30,7 +30,7 @@ describe Travis::Settings::Model do
       attribute :secret, Travis::Settings::EncryptedValue
       validates :secret, presence: true
       def self.model_name
-        ActiveModel::Name.new(self, nil, "temp")
+        ActiveModel::Name.new(self, nil, 'temp')
       end
     end
 
@@ -99,7 +99,7 @@ describe Travis::Settings::Model do
 
       validates :name, presence: true
 
-      def self.name; "Foo"; end
+      def self.name = 'Foo'
     end
 
     model = model_class.new
