@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 $LOAD_PATH.unshift File.expand_path('lib', __dir__)
+require 'travis/settings/version'
 
 Gem::Specification.new do |s|
   s.name         = 'travis-settings'
-  s.version      = '0.0.1'
+  s.version      = TravisSettings::VERSION
   s.authors      = ['Travis CI']
   s.email        = 'contact@travis-ci.org'
   s.homepage     = 'https://github.com/travis-ci/travis-settings'
