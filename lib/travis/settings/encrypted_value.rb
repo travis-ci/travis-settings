@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'virtus'
 
 module Travis
   class Settings
     class EncryptedValue
       include Virtus.value_object
-      attr_reader :value, :key
+      attr_reader :value
 
       values do
         attribute :value, String
@@ -49,15 +51,15 @@ module Travis
       end
 
       def encrypt(value)
-        Travis::Settings::EncryptedColumn.new(key: key, use_prefix: false).dump(value)
+        Travis::Settings::EncryptedColumn.new(key:, use_prefix: false).dump(value)
       end
 
       def decrypt
-        Travis::Settings::EncryptedColumn.new(key: key, use_prefix: false).load(value)
+        Travis::Settings::EncryptedColumn.new(key:, use_prefix: false).load(value)
       end
 
-      def load(value, additional_attributes = nil)
-        self.instance_variable_set('@value', value)
+      def load(value, _additional_attributes = nil)
+        instance_variable_set('@value', value)
       end
     end
   end

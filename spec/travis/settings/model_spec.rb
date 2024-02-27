@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 require 'spec_helper'
 
@@ -10,7 +12,9 @@ describe Travis::Settings::Model do
       attribute :loves_travis, :Boolean
       attribute :height, Integer
       attribute :awesome, :Boolean, default: true
-
+      def self.model_name
+        ActiveModel::Name.new(self, nil, 'temp')
+      end
       attribute :secret, Travis::Settings::EncryptedValue
     end
   end
@@ -27,11 +31,14 @@ describe Travis::Settings::Model do
     model_class = Class.new(described_class) do
       attribute :secret, Travis::Settings::EncryptedValue
       validates :secret, presence: true
+      def self.model_name
+        ActiveModel::Name.new(self, nil, 'temp')
+      end
     end
 
     model = model_class.new
-    expect(model).to_not be_valid
-    expect(model.errors[:secret]).to eq([:blank])
+    expect(model).not_to be_valid
+    expect(model.errors[:secret]).to eq(['can\'t be blank'])
   end
 
   it 'implements read_attribute_for_serialization method' do
@@ -94,12 +101,12 @@ describe Travis::Settings::Model do
 
       validates :name, presence: true
 
-      def self.name; "Foo"; end
+      def self.name = 'Foo'
     end
 
     model = model_class.new
-    expect(model).to_not be_valid
-    expect(model.errors[:name]).to eq([:blank])
+    expect(model).not_to be_valid
+    expect(model.errors[:name]).to eq(['can\'t be blank'])
   end
 
   describe 'encryption' do

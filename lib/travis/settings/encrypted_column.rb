@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 require 'securerandom'
 require 'base64'
+require 'openssl'
 
 module Travis
   class Settings
@@ -54,19 +57,19 @@ module Travis
       end
 
       def decrypt(data)
-        data = data[8..-1] if prefix_used?(data)
+        data = data[8..] if prefix_used?(data)
 
         data = decode data
 
-        iv   = data[-16..-1]
+        iv   = data[-16..]
         data = data[0..-17]
 
         aes = create_aes :decrypt, key.to_s, iv
 
         result = aes.update(data) + aes.final
-        if result
-          result.force_encoding('utf-8')
-        end
+        return unless result
+
+        result.force_encoding('utf-8')
       end
 
       def encrypt(data)
@@ -83,12 +86,12 @@ module Travis
       end
 
       def use_prefix?
-        options.has_key?(:use_prefix) ? options[:use_prefix] : Travis::Features.feature_inactive?(:db_encryption_prefix)
+        options.key?(:use_prefix) ? options[:use_prefix] : Travis::Features.feature_inactive?(:db_encryption_prefix)
       end
 
-      def create_aes(mode = :encrypt, key, iv)
+      def create_aes(mode = :encrypt, key, iv) # rubocop:disable Style/OptionalArguments
         key = key[0, 32]
-        aes = OpenSSL::Cipher::AES.new(256, :CBC)
+        aes = OpenSSL::Cipher.new('aes-256-cbc')
 
         aes.send(mode)
         aes.key = key

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'forwardable'
 
 module Travis
@@ -27,11 +29,11 @@ module Travis
         def model(model_name_or_class = nil)
           if model_name_or_class
             klass = if model_name_or_class.is_a?(String) || model_name_or_class.is_a?(Symbol)
-              name = model_name_or_class.to_s.classify
-              self.const_defined?(name, false) ? self.const_get(name, false) : Travis::Settings.const_get(name, false)
-            else
-              model_name_or_class
-            end
+                      name = model_name_or_class.to_s.classify
+                      const_defined?(name, false) ? const_get(name, false) : Travis::Settings.const_get(name, false)
+                    else
+                      model_name_or_class
+                    end
 
             @model_class = klass
           else
@@ -64,10 +66,10 @@ module Travis
 
       def destroy(id)
         record = find(id)
-        if record
-          delete record
-          record
-        end
+        return unless record
+
+        delete record
+        record
       end
 
       def to_hash
@@ -79,7 +81,7 @@ module Travis
         return unless collection.respond_to?(:each)
 
         collection.each do |element|
-          self.push model_class.load(element, additional_attributes)
+          push model_class.load(element, additional_attributes)
         end
       end
     end

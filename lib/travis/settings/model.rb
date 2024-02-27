@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'virtus'
 require 'travis/settings/encrypted_value'
 require 'travis/settings/model_extensions'
@@ -15,13 +17,13 @@ module Travis
       end
 
       def read_attribute_for_serialization(name)
-        self.send(name) if attribute?(name)
+        send(name) if attribute?(name)
       end
 
       def read_attribute_for_validation(name)
         return unless attribute?(name)
 
-        value = self.send(name)
+        value = send(name)
         value.is_a?(EncryptedValue) ? value.to_s : value
       end
 
@@ -33,7 +35,7 @@ module Travis
         Travis.config.encryption.key
       end
 
-      def to_json
+      def to_json(*_args)
         to_hash.to_json
       end
     end
