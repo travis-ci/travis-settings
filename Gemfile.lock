@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    travis-settings (0.0.1)
+    travis-settings (0.1.0)
       activemodel
       virtus
 
